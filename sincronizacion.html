@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Exemplo de como sincronizar dous applets de GeoGebra</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+		
+		<!-- Necesitamos as librerías jQuery e deploy ggb para facer funcionar os applets de GeoGebra -->
+		
+		<!-- deploy ggb -->
+		<script type="text/javascript" src="deployggb.js"></script>
+		
+		<!-- jQuery -->
+		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+		
+		<!-- Estilos gráficos para os elementos dos applets -->
+		<style>
+		
+			.geogebra { 
+				text-align: center;
+				position: relative;
+			}
+			.geogebra .loader { 
+				display: none;
+			}
+			.geogebra:hover .loader {
+				cursor: pointer;
+				display: block;
+				background-color: rgba(0, 0, 0, 0.2);
+				background-image: url('geogebra-logo-name-600.png');
+				background-size: 300px 45px;
+				background-repeat: no-repeat;
+				background-position: center;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				color: #fff;
+			}
+			
+			/* É necesario utilizar un identificador único para cada Applet substitúe 'id'
+			polo identificador concreto da túa construción podes aproveitar para asignar o
+			aspecto que desexes (cor, tamaño, bordes, etc.) a cada applet */
+			
+			#applet_container_pentagono, #applet_container_pentagono img.previous {
+				width:371px;
+				height:342px;
+			}
+			#applet_container_pentagono span {
+				display: inline-block;
+				margin-top: 45px;
+				line-height:342px;
+			}
+			#applet_container_lenzo, #applet_container_lenzo img.previous {
+				width:371px;
+				height:342px;
+			}
+			#applet_container_lenzo span {
+				display: inline-block;
+				margin-top: 45px;
+				line-height:342px;
+			}
+			
+		</style>
+		
+	</head>
+	<body>
+	
+		
+		<!-- O seguinte código crea e carga o applet -->
+		<script type="text/javascript">
+		
+			// Creamos unha variable para almacenar cada applet de GeoGebra
+			var applet_pentagono = new GGBApplet({id:"applet_pentagono", width:371, height:342, filename:"pentagono-debuxar.ggb"}, true);
+			var applet_lenzo = new GGBApplet({id:"applet_lenzo", width:371, height:342, filename:"lenzo.ggb", enableShiftDragZoom: false }, true);
+			
+			// Variable para almacenar o obxecto interval
+			var accion_lenzo;
+
+			// Cando estea cargada a páxina,
+			$(document).ready(function(){
+			
+				// ao pulsar as etiquetas 'loader',
+				$("#applet_container_pentagono .loader").click(function(){
+					inicia_applets();
+				});
+				$("#applet_container_lenzo .loader").click(function(){
+					inicia_applets();	
+				});
+				
+			});
+			
+			// Función para iniciar os applets
+			function inicia_applets() {
+			
+				// valeirampos as etiqueta 'applet_container'
+				$("#applet_container_pentagono").empty();
+				$("#applet_container_lenzo").empty();
+				
+				// e embebemos os applets
+				applet_pentagono.inject('applet_container_pentagono', 'preferHTML5');
+				applet_lenzo.inject('applet_container_lenzo', 'preferHTML5');
+				
+				// cando pulsemos o botón do rato no aplet do pentagono iniciamos a sincronización
+				$("#applet_container_pentagono").mousedown(function() {
+					accion_lenzo = setInterval(function (){
+						sincroniza_lenzo();
+					}, 20);
+				});
+				
+				// cando soltemos o botón do rato  no aplet do pentagono interrompemos a sincronización
+				$("#applet_container_pentagono").mouseup(function() {
+					clearInterval(accion_lenzo);
+				});
+			}
+			
+			// Función para recoller os datos de applet_pentagono e envialos a applet_lenzo
+			function sincroniza_lenzo() {
+			
+				// recollemos a posición do punto "F" do applet pentagono en dúas variables
+				var x = applet_pentagono.getXcoord("F");
+				var y = applet_pentagono.getYcoord("F");
+				
+				// cambiamos as coordenadas do punto "A" do applet lenzo
+				applet_lenzo.setCoords("A", x, y);
+				
+			}
+
+		</script>
+		
+		<!-- Esta etiqueta vai conter o primeiro applet aínda que ao proncipio só ten unha imaxe do mesmo e un botón para cargalo -->
+		<div class="applet geogebra" id="applet_container_pentagono">
+			<img class="previous" src="pentagono-deduxar.png" alt="">
+			<div class="loader">
+				<span>Pulsa para cargar a construcción en Geogebra</span>
+			</div>
+		</div>
+		
+		<!-- Esta etiqueta vai conter o segundo applet aínda que ao proncipio só ten unha imaxe do mesmo e un botón para cargalo -->
+		<div class="applet geogebra" id="applet_container_lenzo">
+			<img class="previous" src="lenzo.png" alt="">
+			<div class="loader">
+				<span>Pulsa para cargar a construcción en Geogebra</span>
+			</div>
+		</div>
+	</body>
+</html>
+
+
+

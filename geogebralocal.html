@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Exemplo de como cargar GeoGebra dun arquivo local</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+		
+		<!-- Necesitamos as librerías jQuery e deploy ggb para facer funcionar os applets de GeoGebra -->
+		
+		<!-- deploy ggb -->
+		<script type="text/javascript" src="deployggb.js"></script>
+		
+		<!-- jQuery -->
+		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+		
+		<!-- Estilos gráficos para os elementos dos applets -->
+		<style>
+		
+			.geogebra { 
+				text-align: center;
+				position: relative;
+			}
+			.geogebra .loader { 
+				display: none;
+			}
+			.geogebra:hover .loader {
+				cursor: pointer;
+				display: block;
+				background-color: rgba(0, 0, 0, 0.2);
+				background-image: url('geogebra-logo-name-600.png');
+				background-size: 300px 45px;
+				background-repeat: no-repeat;
+				background-position: center;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				color: #fff;
+			}
+			
+			/* É necesario utilizar un identificador único para cada applet substitúe 'id'
+			polo identificador concreto da túa construción podes aproveitar para asignar o
+			aspecto que desexes (cor, tamaño, bordes, etc.) a cada applet */
+			
+			#applet_container_pentagono, #applet_container_pentagono img.previous {
+				width:371px;
+				height:342px;
+			}
+			#applet_container_pentagono span {
+				display: inline-block;
+				margin-top: 45px;
+				line-height:342px;
+			}
+			
+		</style>
+		
+	</head>
+	<body>
+	
+		
+		<!-- O seguinte código crea e carga o applet -->
+		<script type="text/javascript">
+		
+			// Creamos unha variable para almacenar o applet de GeoGebra
+			var applet_pentagono = new GGBApplet({id:"applet_pentagono", width:371, height:342, filename:"pentagono.ggb"}, true);
+			
+			// Cando estea cargada a páxina,
+			$(document).ready(function(){
+			
+				// ao pulsar na etiqueta 'loader',
+				$("#applet_container_pentagono .loader").click(function(){
+					
+					// valeira a etiqueta 'applet_container_pentagono'
+					$("#applet_container_pentagono").empty();
+					
+					// e embebe o applet
+					applet_pentagono.inject('applet_container_pentagono', 'preferHTML5');
+					
+				});
+			});
+			
+		</script>
+		
+		<!-- Esta etiqueta vai conter o applet aínda que ao proncipio só ten unha imaxe do mesmo e un botón para cargalo -->
+		<div class="applet geogebra" id="applet_container_pentagono">
+			<img class="previous" src="pentagono.png" alt="">
+			<div class="loader">
+				<span>Pulsa para cargar a construcción en Geogebra</span>
+			</div>
+		</div>
+		
+	</body>
+</html>
