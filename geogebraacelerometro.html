@@ -1,0 +1,120 @@
+﻿<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Exemplo de como enviar datos do acelerómetro a un applet de GeoGebra</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" href="styleIacelerometro.css" type="text/css" media="all" />
+		
+		<!-- Necesitamos as librerías jQuery e deployggb para facer funcionar os applets de GeoGebra -->
+		
+		<!-- deploy ggb -->
+		<script type="text/javascript" src="deployggb.js"></script>
+		
+		<!-- jQuery -->
+		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+		
+		<!-- Estilos gráficos para os elementos dos applets -->
+		<style>
+		
+        	.geogebra { text-align: center; position: relative; }
+        	.geogebra .loader { display: none; }
+        	.geogebra:hover .loader {
+                cursor: pointer;
+                display: block;
+                background-color: rgba(0, 0, 0, 0.2);
+                background-image: url('geogebra-logo-name-600.png');
+                background-size: 300px 45px;
+                background-repeat: no-repeat;
+                background-position: center;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                color: #fff;
+        	}
+        	
+        	/* É necesario utilizar un identificador único para cada Applet substitúe
+        	'_acelerometro' polo identificador concreto da túa construción.
+        	Tamén podes aproveitar para asignar o aspecto que desexes (cor, tamaño,
+        	bordes, etc.) a cada applet. */
+        	
+        	#applet_container_acelerometro, #applet_container_acelerometro img.previous {
+                width:850px;
+                height:472px;
+        	}
+        	#applet_container_acelerometro span {
+                display: inline-block;
+                margin-top: 45px;
+                line-height:472px;
+        	}
+        	
+		</style>
+		
+	</head>
+	<body>
+	
+		<!-- O seguinte código crea e carga o Applet -->
+		<script type="text/javascript">
+
+        	// Creamos unha variable para almacenar o Applet de GeoGebra
+        	var applet_acelerometro = new GGBApplet({
+        		id:"applet_acelerometro",
+        		scale: 0.7019,
+        		showFullscreenButton: true,
+        		material_id:"pgkfyrqh",
+        		appletOnLoad: function() {
+     				// Comeza a enviar datos do acelerómetro a GeoGebra
+					window.addEventListener("deviceorientation", handleOrientation, true);  
+    			}
+    		}, true);
+			
+			// Creamos dúas variables para almacenar os águlos de xiro
+			var angulo = 0;
+			var angulo2 = 0;
+			
+			// Creamos unha función para recoller os datos do acelerómetro e envialos ao applet
+			function handleOrientation(event) {
+				var beta = Math.round(event.beta);
+				var gamma = Math.round(event.gamma);
+				var alpha = Math.round(event.alpha);
+				angulo = -alpha* Math.PI / 180;
+				angulo2 = (gamma* Math.PI / 180)-90;
+				applet_acelerometro.setValue("a", angulo);
+				applet_acelerometro.setValue("b", angulo2);
+      		}
+        	
+        	// Cando estea cargada a páxina,
+        	$(document).ready(function(){
+        	
+        		// Damos unha alerta no caso de que o navegador non poda usar Device Orientation
+				if (!window.DeviceOrientationEvent) {
+					alert("O teu navegador non soporta Device Orientation");
+				}
+				
+                // ao pulsar na etiqueta 'loader',
+                $("#applet_container_acelerometro .loader").click(function(){
+                
+                    // valeira a etiqueta 'applet_container_acelerometro'
+                    $("#applet_container_acelerometro").empty();
+                    
+                    // e embebe o applet
+                    applet_acelerometro.setHTML5CodebaseVersion('5.0');
+					applet_acelerometro.inject('applet_container_acelerometro', 'preferHTML5');
+					     
+				});
+				
+        	});  
+        	    
+		</script>
+		
+		<!-- Esta etiqueta vai conter o applet aínda que ao proncipio só ten unha imaxe do mesmo e un botón para cargalo -->
+		<div class="applet geogebra" id="applet_container_acelerometro">
+        	<img class="previous" src="acelerometro.png" alt="">
+        	<div class="loader">
+           		<span>Pulsa para cargar a construcción en Geogebra</span>
+        	</div>
+		</div>
+		
+	</body>
+</html>

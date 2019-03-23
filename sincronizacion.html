@@ -5,9 +5,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
 		
-		<!-- Necesitamos as librerías jQuery e deploy ggb para facer funcionar os applets de GeoGebra -->
+		<!-- Necesitamos as librerías jQuery e deployggb para facer funcionar os applets de GeoGebra -->
 		
-		<!-- deploy ggb -->
+		<!-- deployggb -->
 		<script type="text/javascript" src="deployggb.js"></script>
 		
 		<!-- jQuery -->
@@ -39,9 +39,10 @@
 				color: #fff;
 			}
 			
-			/* É necesario utilizar un identificador único para cada Applet substitúe 'id'
-			polo identificador concreto da túa construción podes aproveitar para asignar o
-			aspecto que desexes (cor, tamaño, bordes, etc.) a cada applet */
+			/* É necesario utilizar un identificador único para cada Applet substitúe
+			'_pentagono' e '_lenzo' polos identificadores concretos das túas construcións.
+			Tamén podes aproveitar para asignar o aspecto que desexes (cor, tamaño,
+			bordes, etc.) a cada applet. */
 			
 			#applet_container_pentagono, #applet_container_pentagono img.previous {
 				width:371px;
@@ -66,7 +67,6 @@
 		
 	</head>
 	<body>
-	
 		
 		<!-- O seguinte código crea e carga o applet -->
 		<script type="text/javascript">
