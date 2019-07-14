@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Exemplo de como cargar GeoGebra dende GeoGebraTube</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+		
+		<!-- Necesitamos as librerías jQuery e deployggb para facer funcionar os applets de GeoGebra -->
+		
+		<!-- deployggb -->
+		<script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
+		
+		<!-- jQuery -->
+		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+		
+		<!-- Estilos gráficos para os elementos dos applets -->
+		<style>
+			html, body { background-color: #3a475b; padding: 0; margin: 0; height: 100%; overflow: hidden }
+			* { padding: 0; margin: 0; }
+
+			.geogebra { 
+				text-align: center;
+				position: absolute;
+				top: -12px;
+				bottom: 0;
+				left: 0;
+				right: 0;
+			}
+		</style>
+		
+	</head>
+	<!-- O seguinte código crea e carga o applet -->
+	<script type="text/javascript">
+	
+		// Creamos unha variable para almacenar o applet de GeoGebra
+		var applet_wngm8rkc;
+		
+		// Cando estea cargada a páxina,
+		$(document).ready(function(){
+			
+			var width = $(window).width();
+			var height = $(window).height();
+			console.log('width: '+ width +' height: '+ height);
+			
+			$('#applet_container_wngm8rkc').css('width', width +'px');
+			$('#applet_container_wngm8rkc').css('height', height +'px');
+			
+			applet_wngm8rkc = new GGBApplet({
+				id:"applet_wngm8rkc",
+				width:width,
+				height:height, 
+				material_id:"nhyuha8c",
+				appletOnLoad: function() {
+     				// alert('hola');
+    			}
+			}, true);
+			
+			applet_wngm8rkc.inject('applet_container_wngm8rkc', 'preferHTML5');
+			
+		});
+			
+	</script>
+	<body>
+		<!-- Esta etiqueta vai conter o applet aínda que ao proncipio só ten unha imaxe do mesmo e un botón para cargalo -->
+		<div class="applet geogebra" id="applet_container_wngm8rkc"></div>
+	</body>
+</html>
