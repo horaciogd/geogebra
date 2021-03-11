@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO geogebra</title>
+    <style>
+    .geogebra { 
+		text-align: center;
+		position: relative;
+	}
+	.geogebra .loader { 
+		display: none;
+	}
+	.geogebra:hover .loader {
+		cursor: pointer;
+		display: block;
+		background-color: rgba(0, 0, 0, 0.2);
+		background-image: url('https://www.vhplab.net/code/geogebra/geogebra-logo-name-600.png');
+		background-size: 300px 45px;
+		background-repeat: no-repeat;
+		background-position: center;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		color: #fff;
+	}
+			
+	/* É necesario utilizar un identificador único para cada applet substitúe 'id'
+	polo identificador concreto da túa construción podes aproveitar para asignar o
+	aspecto que desexes (cor, tamaño, bordes, etc.) a cada applet */
+			
+	#applet_container_360, #applet_container_360 img.previous {
+		width:1265px;
+		height:715px;
+	}
+	#applet_container_360 span {
+		display: inline-block;
+		margin-top: 45px;
+		line-height:715px;
+	}
+	</style>
+	</head>
+	<!-- deploy ggb -->
+	<script type="text/javascript" src="https://www.geogebratube.org/scripts/deployggb.js"></script>
+	<!-- socket.io -->
+	<script src="/socket.io/socket.io.js"></script>
+	<!-- jQuery -->
+	<script type="text/javascript" src="https://www.vhplab.net/code/geogebra/jquery-3.3.1.min.js"></script>
+
+	<script type="text/javascript">
+	// Creamos unha variable para almacenar o Applet de GeoGebra
+	var applet_360 = new GGBApplet({id:"applet_360", width:1265, height:715, material_id:"kk8gvew3"}, true);
+	var loaded = false;
+	var accion;
+        
+	var socket = io();
+	function sincroniza() {
+		// recollemos a posición do punto "F" do applet pentagono en dúas variables
+		var x = Math.random() * 10.0;
+		var y = Math.random() * 10.0;
+		// cambiamos as coordenadas do punto "A" do applet lenzo
+		applet_360.setCoords("A", x, y);
+	}
+
+    var max = 610;
+    var min = 400;
+    var avg_x = 0;
+    var avg_y = 0;
+    var avg_z = 0;
+			  	
+	$(document).ready(function() {
+		console.log('ready');
+			
+		socket.on('chat message', function(msg){
+			var data = msg.split(" ");
+			avg_x = avg_x* 0.8 + parseInt(data[0]) * 0.2;
+			avg_y = avg_y* 0.8 + parseInt(data[1]) * 0.2;
+			avg_z = avg_z* 0.8 + parseInt(data[2]) * 0.2;
+			var x = (2.0*(avg_x - min)/(max - min)) - 1;
+			if (x > 1.0) {
+				x = 1.0;
+			} else if (x < -1.0) {
+				x = -1.0;
+			}
+			var y = (2.0*(avg_y - min)/(max - min)) - 1;
+			if (y > 1.0) {
+				y = 1.0;
+			} else if (y < -1.0) {
+				y = -1.0;
+			}
+			var z = (2.0*(avg_z - min)/(max - min)) - 1;
+			if (z > 1.0) {
+				z = 1.0;
+			} else if (z < -1.0) {
+				z = -1.0;
+			}
+			var angle_x = (Math.asin(x) + Math.PI/4) * 2.0; // * 180 / Math.PI;
+			var angle_y = (Math.asin(y) + Math.PI/4) * 2.0; // 180 / Math.PI;
+			var angle_z = (Math.asin(z) + Math.PI/4) * 2.0; // 180 / Math.PI;
+			console.log('angle_x'+ angle_x);
+			console.log('angle_y: '+ angle_y);
+			console.log('angle_z: '+ angle_z);
+			if (loaded) {
+					applet_360.setValue("a", angle_x);
+					applet_360.setValue("b", angle_y);
+			}
+		});
+			
+        // ao pulsar na etiqueta 'loader',
+		$("#applet_container_360 .loader").click(function(){
+			// valeira a etiqueta 'applet_container_360'
+			$("#applet_container_360").empty();
+			// e embebe o applet
+			applet_360.inject('applet_container_360', 'preferHTML5');
+			loaded = true;   
+			/*
+			accion = setInterval(function (){
+				sincroniza();
+			}, 200);
+			*/
+		});
+            
+	});
+	</script>
+	<body>
+		<div class="applet geogebra" id="applet_container_360">
+			<img class="previous" src="https://www.vhplab.net/code/geogebra/360.png" alt="">
+			<div class="loader">
+				<span>Pulsa para cargar a construcción en Geogebra</span>
+			</div>
+		</div>
+	</body>
+</html>
